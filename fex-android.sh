@@ -37,6 +37,7 @@ function fexinstall()
     if [ $? == 0 ]; then
 	termux_install
     else
+        cd ~
 	rm -r Fex-Android
 	exit 0
     fi
