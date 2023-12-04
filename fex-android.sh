@@ -22,12 +22,14 @@ function termux_install
     echo "exit-idle-time = -1" >> ~/../usr/etc/pulse/daemon.conf
     echo "autospawn = no" >> ~/../usr/etc/pulse/client.conf
     clear
+    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.0-beta/ubuntu.tar.xz -O ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting Ubuntu 22.04.3 LTS (Jammy Jellyfish) RootFS...\e[0m"
-    tar -xf /data/data/com.termux/files/home/FEX-Android/fex/ubuntu.tar.xz
+    tar -xf ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting wine...\e[0m"
     tar -xf ubuntu-fs64/opt/wine/wine-7.12-amd64/wine.tar.xz -C ubuntu-fs64/root
     echo -e "\e[32m[+] installation is complete\e[0m"
     echo -e "Type \e[31mfex\e[0m command to run"
+    rm ubuntu.tar.xz
 
 }
 
