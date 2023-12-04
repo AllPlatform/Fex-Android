@@ -8,7 +8,8 @@ curl https://raw.githubusercontent.com/AllPlatform/Fex-Android/main/fex-android.
 from Android 8 onwards
 ## Mesa3D Turnip Vulkan Driver
 - Support from Adreno 6xx
-- Adreno 7xx ?? 
+- Adreno 7xx ??
+- DRI3 patch by [xMeM](https://github.com/xMeM/termux-packages/tree/master/packages/mesa)
 - mali GPU etc. not support
 ## minimum system recommended
 - Snapdragon 845, 855
