@@ -14,10 +14,15 @@ from Android 8 onwards
 - Snapdragon 845, 855
 - 6GB RAM, 8GB RAM
 ## Acknowledgements
-Fex-Android would not be possible without the hard work and dedication of the following individuals and projects:
+Special thanks to the contributions of the following individuals and projects:
 - [FEX-EMU](https://github.com/FEX-Emu/FEX)
+- [Wine](https://gitlab.winehq.org/wine/wine)
 - [Mesa3D](https://www.mesa3d.org/)
 - [DXVK](https://github.com/doitsujin/dxvk)
 - [DXVK-Async](https://github.com/Sporif/dxvk-async)
 - [Termux And Termux-X11](https://github.com/termux)
-- 
+- [proot](https://github.com/proot-me/proot)
+
+
+
+
