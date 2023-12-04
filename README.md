@@ -14,8 +14,8 @@ from Android 8 onwards
 - Snapdragon 845, 855
 - 6GB RAM, 8GB RAM
 ## Root File System Information
-- Ubuntu 22.04.3 LTS (Jammy Jellyfish) Aarch64
-- Ubuntu 22.04.3 LTS (Jammy Jellyfish) X86_64
+- Ubuntu 22.04.3 LTS Aarch64
+- Ubuntu 22.04.3 LTS X86_64
 - Wine 7.12 x86_64
 ## Acknowledgements
 Special thanks to the contributions of the following individuals and projects:
