@@ -1,4 +1,4 @@
-Fex-Android is script install FEX-EMU for Android in Termux Without Root
+Fex-Android is script install [FEX-EMU](https://github.com/FEX-Emu/FEX) for Android in Termux Without Root
 
 ## Installation
 ```
