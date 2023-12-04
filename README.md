@@ -1,4 +1,4 @@
-FEX-EMU
+Fex-Android is script install FEX-EMU for Android in Termux Without Root
 
 ## Installation
 ```
@@ -13,6 +13,10 @@ from Android 8 onwards
 ## minimum system recommended
 - Snapdragon 845, 855
 - 6GB RAM, 8GB RAM
+## Root File System Information
+- Ubuntu 22.04.3 LTS (Jammy Jellyfish) Aarch64
+- Ubuntu 22.04.3 LTS (Jammy Jellyfish) X86_64
+- Wine 7.12 x86_64
 ## Acknowledgements
 Special thanks to the contributions of the following individuals and projects:
 - [FEX-EMU](https://github.com/FEX-Emu/FEX)
