@@ -37,7 +37,7 @@ function fexinstall()
     if [ $? == 0 ]; then
 	termux_install
     else
-        cd ~
+	cd ~
 	rm -r Fex-Android
 	exit 0
     fi
@@ -130,7 +130,7 @@ function _kill()
 }
 function write_env()
 {
-    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nWINE=8.1-stable\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6" >$FEX_DATA
+    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nWINE=8.1-stable\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6\nver=$ver" >$FEX_DATA
     chmod 777 $FEX_DATA
 }
 function start_fex()
@@ -275,7 +275,7 @@ function wine()
 }
 function about_fex()
 {
-    dialog --title "FEX-Android Script ver 1.0" --msgbox \
+    dialog --title "FEX-Android Script ver $ver" --msgbox \
 	" Termux script written by AkiraYuki\n\
 	Fex-emu  https://github.com/FEX-Emu/FEX\n\
 	Wine     https://gitlab.winehq.org/wine/wine\n\
@@ -324,6 +324,7 @@ src3=off
 src4=on
 src5=off
 src6=off
+ver="1.0"
 EOF
 
 chmod +x fex
