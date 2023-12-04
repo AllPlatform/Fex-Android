@@ -2,7 +2,7 @@ Fex-Android is script install FEX-EMU for Android in Termux Without Root
 
 ## Installation
 ```
-$ curl https://raw.githubusercontent.com/AllPlatform/Fex-Android/main/fex-android.sh -o fex.sh; bash fex.sh
+curl https://raw.githubusercontent.com/AllPlatform/Fex-Android/main/fex-android.sh -o fex.sh; bash fex.sh
 ```
 ## Device Support
 from Android 8 onwards
