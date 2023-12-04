@@ -5,6 +5,7 @@ Install [Termux](https://github.com/termux/termux-app/releases/download/v0.118.0
 ```
 curl https://raw.githubusercontent.com/AllPlatform/Fex-Android/main/fex-android.sh -o fex.sh; bash fex.sh
 ```
+After installation completed, type fex command to run
 ## Device Support
 from Android 8 onwards
 ## Mesa3D Turnip Vulkan Driver
