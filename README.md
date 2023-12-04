@@ -13,4 +13,9 @@ from Android 8 onwards
 ## minimum system recommended
 - Snapdragon 845, 855
 - 6GB RAM, 8GB RAM
-
+## Acknowledgements
+Fex-Android would not be possible without the hard work and dedication of the following individuals and projects:
+- [Mesa3D](https://www.mesa3d.org/)
+- [DXVK](https://github.com/doitsujin/dxvk)
+- [Termux] (https://github.com/termux)
+- 
