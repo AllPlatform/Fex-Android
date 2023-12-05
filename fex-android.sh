@@ -56,7 +56,7 @@ function main()
 }
 main
 
-cat <<'EOF' >> start-ubuntu64.sh
+cat <<'EOF' >> start-proot.sh
 #!/data/data/com.termux/files/usr/bin/bash
 pulseaudio --start
 source /data/data/com.termux/files/home/Fex-Android/start.sh
@@ -96,6 +96,56 @@ cmd+=" $cmdstart"
 $cmd
 EOF
 
+cat <<'EOF' >> start-chroot.sh
+#!/data/data/com.termux/files/usr/bin/bash
+sudo rm -r /data/data/com.termux/files/usr/tmp/.wine*
+sudo mount --bind /proc ubuntu-fs64/proc
+sudo mount --bind /dev ubuntu-fs64/dev
+sudo mount --bind /sys ubuntu-fs64/sys
+sudo mount --bind /data/data/com.termux/files/usr/tmp ubuntu-fs64/tmp
+sudo mount -t devpts devpts ubuntu-fs64/dev/pts
+sudo mount --bind /sdcard ubuntu-fs64/sdcard
+sudo chown root:root ubuntu-fs64/root/.wine
+pulseaudio --start
+source /data/data/com.termux/files/home/Fex-Android/start.sh
+unset LD_PRELOAD
+unset TMPDIR
+unset PREFIX
+unset BOOTCLASSPATH
+unset ANDROID_ART_ROOT
+unset ANDROID_DATA
+unset ANDROID_I18N_ROOT
+unset ANDROID_ROOT
+unset ANDROID_TZDATA_ROOT
+unset COLORTERM
+unset DEX2OATBOOTCLASSPATH
+export WINEDEBUG=-all
+export USE_HEAP=1
+export DISPLAY=:1
+export PULSE_SERVER=127.0.0.1
+export DXVK_HUD="devinfo,fps,api,version,gpuload"
+SHELL=/bin/bash
+HOME=/root
+LANG=C.UTF-8
+PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin:/usr/games:/usr/local/games
+cmd="/data/data/com.termux/files/usr/bin/sudo"
+cmd+=" -E"
+cmd+=" /data/data/com.termux/files/usr/bin/chroot"
+cmd+=" ubuntu-fs64"
+cmd+=" bin/FEXInterpreter"
+cmd+=" $cmdstart"
+$cmd
+PATH="/data/data/com.termux/files/usr/bin"
+user_t=$(whoami)
+sudo rm -r ubuntu-fs64/tmp/.wine*
+sudo chown $user_t:$user_t ubuntu-fs64/root/.wine
+sudo umount -lf ubuntu-fs64/dev
+sudo umount -lf ubuntu-fs64/sys
+sudo umount ubuntu-fs64/tmp
+sudo umount ubuntu-fs64/sdcard
+sudo umount -lf ubuntu-fs64/proc
+EOF
+
 cat <<'EOF' >> fex
 #!/data/data/com.termux/files/usr/bin/bash
 FEX_DATA=/data/data/com.termux/files/home/Fex-Android/data/fex_data
@@ -116,6 +166,20 @@ function uninstall()
         main_menu
     fi
 }
+
+function root_killall()
+{
+    sudo ps -ax | grep "[F]EXIn" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
+    sudo ps -ax | grep "[p]ulseaudio" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
+    sudo ps -ax | grep "[c]om.termux.x11.Loader" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
+}
+function root_kill()
+{
+    root_killall
+    dialog --title "FEX-Android" --msgbox "All progress has been killed" 10 50
+    main_menu
+}
+
 function _killall()
 {
     ps -ax | grep "[p]root" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
@@ -138,16 +202,30 @@ function write_env()
 function start_fex()
 {
     if [[ $DRI3 == "Enabled" ]]; then
-	echo "FEX_X87REDUCEDPRECISION=true cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	export FEX_X87REDUCEDPRECISION=true
+	echo "cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     else
-	echo "MESA_VK_WSI_DEBUG=sw FEX_X87REDUCEDPRECISION=true cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	export MESA_VK_WSI_DEBUG=sw
+	export FEX_X87REDUCEDPRECISION=true
+	echo "cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     fi
     _killall
     termux-x11 :1 > /dev/null 2>&1 &
-    ./start-ubuntu64.sh /dev/null 2>&1 &
+    checkroot=$(sudo whoami)
+    if [[ $checkroot == "root" ]]; then
+	./start-chroot.sh > /dev/null 2>&1 &
+	mode="chroot root detected"
+    else
+	./start-proot.sh > /dev/null 2>&1 &
+	mode="proot non-root detected"
+    fi
     am start -n com.termux.x11/com.termux.x11.MainActivity
-    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version 7.12-amd64\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3" 10 50
-    _kill
+    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version 7.12-amd64\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode" 10 50
+    if [[ $checkroot == "root" ]]; then
+        root_kill
+    else                                                                                        ./start-proot.sh > /dev/null 2>&1 &
+        _kill
+    fi
     main_menu
 }
 function config_fex()
@@ -326,12 +404,13 @@ src3=off
 src4=on
 src5=off
 src6=off
-ver="1.0"
+ver="1.1-patch_root"
 EOF
 
+chmod +x start-chroot.sh
 chmod +x fex
 chmod +x fex_data
-chmod +x start-ubuntu64.sh
+chmod +x start-proot.sh
 mv fex /data/data/com.termux/files/usr/bin
 mkdir -p /data/data/com.termux/files/home/Fex-Android/data/
 mv fex_data /data/data/com.termux/files/home/Fex-Android/data/
