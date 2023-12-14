@@ -32,7 +32,7 @@ Special thanks to the contributions of the following individuals and projects:
 - [DXVK-Async](https://github.com/Sporif/dxvk-async)
 - [Termux And Termux-X11](https://github.com/termux)
 - [proot](https://github.com/proot-me/proot)
-## Note
-fex works through proot which is quite slow, but cpu processing speed is not affected much, and quite consumes a lot of ram
+## Other
+DirectX 11 Demo [here](https://github.com/guitarfreak/DirectX-11-Demo/releases/tag/v0.6.3)
 
 
