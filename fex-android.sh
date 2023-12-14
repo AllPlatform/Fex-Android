@@ -150,6 +150,13 @@ sudo umount -lf ubuntu-fs64/sys
 sudo umount ubuntu-fs64/tmp
 sudo umount ubuntu-fs64/sdcard
 sudo umount -lf ubuntu-fs64/proc
+##
+sudo chown $user_t:$user_t ubuntu-fs64/root/.wine
+sudo umount -lf ubuntu-fs64/dev
+sudo umount -lf ubuntu-fs64/sys
+sudo umount ubuntu-fs64/tmp
+sudo umount ubuntu-fs64/sdcard
+sudo umount -lf ubuntu-fs64/proc
 EOF
 
 cat <<'EOF' >> fex
@@ -175,9 +182,9 @@ function uninstall()
 
 function root_killall()
 {
-    sudo ps -ax | grep "[F]EXIn" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
-    sudo ps -ax | grep "[p]ulseaudio" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
-    sudo ps -ax | grep "[c]om.termux.x11.Loader" | awk '{print $1}' | xargs kill -9 > /dev/null 2>&1
+    sudo ps -ax | grep "[F]EXIn" | awk '{print $1}' | xargs sudo kill -9 > /dev/null 2>&1
+    sudo ps -ax | grep "[p]ulseaudio" | awk '{print $1}' | xargs sudo kill -9 > /dev/null 2>&1
+    sudo ps -ax | grep "[c]om.termux.x11.Loader" | awk '{print $1}' | xargs sudo kill -9 > /dev/null 2>&1
 }
 function root_kill()
 {
@@ -371,7 +378,7 @@ function wine_csrc()
 
 function wine()
 {
-    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix"2>&1 >/dev/tty)
+    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix" 2>&1 >/dev/tty)
     case $output in
     1)
 	wine_scr;;
@@ -379,7 +386,8 @@ function wine()
 	wine_csrc;;
     3)
 	rm -rf ubuntu-fs64/root/.wine
-	tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root;;
+	tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root
+	wine;;
     esac
     main_menu
 }
@@ -397,15 +405,16 @@ function about_fex()
 }
 function run_terminal()
 {
+    clear
     echo -e "\e[32m[+] run Terminal mode in Proot\e[0m"
     echo -e "\e[32m[+] type command  exit to automatic kill session\e[0m"
-    echo "/bin/bash --login" > start.sh
+    echo "cmdstart='/bin/bash --login'" > start.sh
     ./start-proot.sh
     _kill
 }
 function main_menu()
 {
-    var=$(dialog --menu "FEX-Android" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Uninstall Fex-Android" 5 "Kill All" 6 "About" 7 "Run Terminal" 8 "Exit"2>&1 >/dev/tty)
+    var=$(dialog --menu "FEX-Android" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Uninstall Fex-Android" 5 "Kill All" 6 "About" 7 "Run Terminal" 8 "Exit" 2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
         exit 0
     fi
@@ -423,7 +432,7 @@ function main_menu()
     6)
 	about_fex;;
     7)
-	run-terminal;;
+	run_terminal;;
     8)
 	exit 0;;
     esac
