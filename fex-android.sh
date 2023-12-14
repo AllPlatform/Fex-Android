@@ -202,7 +202,7 @@ function _kill()
 }
 function write_env()
 {
-    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nWINE=8.1-stable\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6\nver=$ver" >$FEX_DATA
+    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nDBG=$DBG\nWINE=8.1-stable\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6\nver=$ver" >$FEX_DATA
     chmod 777 $FEX_DATA
 }
 function start_fex()
@@ -216,6 +216,16 @@ function start_fex()
 	echo "cmdstart='/opt/wine/wine-8.15-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     fi
     _killall
+    if [[ $DBG == "Enabled" ]]; then
+	clear
+	echo -e "\e[32m[+] run Debug mode in Proot\e[0m"
+        echo -e "\e[32m[+] type command  exit to automatic kill session\e[0m"
+	termux-x11 :1 > /dev/null 2>&1 &
+	am start -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1 &
+	./start-proot.sh
+	_kill
+	main_menu
+    fi
     termux-x11 :1 > /dev/null 2>&1 &
     checkroot=$(sudo whoami)
     if [[ $checkroot == "root" ]]; then
@@ -241,7 +251,8 @@ function config_fex()
 	1 "DRI3    Enabled Termux-X11 DRI3                $DRI3" \
 	2 "GL      Enabled OpenGL Thunk libs              $GL" \
 	3 "Vulkan  Enabled Vulkan Thunk libs              $VK" \
-	4 "FEX     Run FEX-Android when Termux startup    $FEX" 2>&1 >/dev/tty)
+	4 "FEX     Run FEX-Android when Termux startup    $FEX" \
+	5 "DEBUG   Run Fex-emu with Wine Debug in proot   $DBG" 2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
         main_menu
     fi
@@ -299,6 +310,20 @@ function config_fex()
 	    rm >~/.bashrc
 	    FEX="Disabled"
             write_env;;
+	esac
+	config_fex;;
+    5)
+	_dbg=$(dialog --title "FEX-Configuration" --menu "Do you want to Enabled/Disabled debug mode?" \
+                10 40 25 1 "Enabled" 2 "Disabled" 2>&1 >/dev/tty)
+	case $_dbg in
+	1)
+	    DBG="Enabled"
+	    write_env;;
+	2)
+	    DBG="Disabled"
+	    write_env;;
+	esac
+	config_fex;;
     *)
 	main_menu;;
 	esac
@@ -413,6 +438,7 @@ DRI3=Enabled
 GL=Disabled
 VK=Enabled
 FEX=Disabled
+DBG=Disabled
 WINE="8.15-amd64"
 SCR="1280x720"
 src1=off
