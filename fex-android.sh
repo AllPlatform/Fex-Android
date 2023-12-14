@@ -27,7 +27,7 @@ function termux_install
     echo "exit-idle-time = -1" >> ~/../usr/etc/pulse/daemon.conf
     echo "autospawn = no" >> ~/../usr/etc/pulse/client.conf
     clear
-    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.0-beta/ubuntu.tar.xz -O ubuntu.tar.xz
+    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.2-update/ubuntu.tar.xz -O ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting Ubuntu 22.04.3 LTS RootFS...\e[0m"
     tar -xf ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting wine...\e[0m"
