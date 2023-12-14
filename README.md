@@ -22,7 +22,7 @@ from Android 8 onwards
 - 6GB RAM, 8GB RAM
 ## Root File System Information
 - Ubuntu 22.04.3 LTS X86_64
-- Wine 7.12 x86_64
+- Wine 8.15 x86_64
 ## Acknowledgements
 Special thanks to the contributions of the following individuals and projects:
 - [FEX-EMU](https://github.com/FEX-Emu/FEX)
