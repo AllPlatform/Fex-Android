@@ -326,9 +326,7 @@ function config_fex()
 	config_fex;;
     *)
 	main_menu;;
-	esac
-	config_fex
-	;;
+	config_fex;;
     esac
     main_menu
 }
