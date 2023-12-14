@@ -13,6 +13,11 @@ function termux_install
     yes | pkg update
     pkg install x11-repo -y
     pkg install tsu termux-x11-nightly wget proot pulseaudio xz-utils -y
+    rm /data/data/com.termux/files/usr/bin/fex
+    rm -rf /data/data/com.termux/files/home/Fex-Android/*
+    rm -r /sdcard/Fex-Android/*
+    wget https://raw.githubusercontent.com/doitsujin/dxvk/master/dxvk.conf
+    mv dxvk.conf /sdcard/Fex-Android/
     if grep -q "anonymous" ~/../usr/etc/pulse/default.pa;then
 	echo "module already present"
     else
@@ -23,10 +28,10 @@ function termux_install
     echo "autospawn = no" >> ~/../usr/etc/pulse/client.conf
     clear
     wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.0-beta/ubuntu.tar.xz -O ubuntu.tar.xz
-    echo -e "\e[32m[+] Extracting Ubuntu 22.04.3 LTS (Jammy Jellyfish) RootFS...\e[0m"
+    echo -e "\e[32m[+] Extracting Ubuntu 22.04.3 LTS RootFS...\e[0m"
     tar -xf ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting wine...\e[0m"
-    tar -xf ubuntu-fs64/opt/wine/wine-7.12-amd64/wine.tar.xz -C ubuntu-fs64/root
+    tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root
     echo -e "\e[32m[+] installation is complete\e[0m"
     echo -e "Type \e[31mfex\e[0m command to run"
     rm ubuntu.tar.xz
@@ -71,7 +76,7 @@ unset ANDROID_ROOT
 unset ANDROID_TZDATA_ROOT
 unset COLORTERM
 unset DEX2OATBOOTCLASSPATH
-export WINEDEBUG=-all
+export DXVK_CONFIG_FILE=/sdcard/Fex-Android/dxvk.conf
 export USE_HEAP=1
 export DISPLAY=:1
 export PULSE_SERVER=127.0.0.1
@@ -119,6 +124,7 @@ unset ANDROID_ROOT
 unset ANDROID_TZDATA_ROOT
 unset COLORTERM
 unset DEX2OATBOOTCLASSPATH
+export DXVK_CONFIG_FILE=/sdcard/Fex-Android/dxvk.conf
 export WINEDEBUG=-all
 export USE_HEAP=1
 export DISPLAY=:1
@@ -203,11 +209,11 @@ function start_fex()
 {
     if [[ $DRI3 == "Enabled" ]]; then
 	export FEX_X87REDUCEDPRECISION=true
-	echo "cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	echo "cmdstart='/opt/wine/wine-8.15-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     else
 	export MESA_VK_WSI_DEBUG=sw
 	export FEX_X87REDUCEDPRECISION=true
-	echo "cmdstart='/opt/wine/wine-7.12-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	echo "cmdstart='/opt/wine/wine-8.15-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     fi
     _killall
     termux-x11 :1 > /dev/null 2>&1 &
@@ -216,6 +222,7 @@ function start_fex()
 	./start-chroot.sh > /dev/null 2>&1 &
 	mode="chroot root detected"
     else
+	export WINEDEBUG=-all
 	./start-proot.sh > /dev/null 2>&1 &
 	mode="proot non-root detected"
     fi
@@ -349,7 +356,7 @@ function wine()
 	wine_csrc;;
     3)
 	rm -rf ubuntu-fs64/root/.wine
-	tar -xf ubuntu-fs64/opt/wine/wine-7.12-amd64/wine.tar.xz -C ubuntu-fs64/root;;
+	tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root;;
     esac
     main_menu
 }
@@ -365,9 +372,17 @@ function about_fex()
 	Proot    https://github.com/proot-me" 30 65
     main_menu
 }
+function run_terminal()
+{
+    echo -e "\e[32m[+] run Terminal mode in Proot\e[0m"
+    echo -e "\e[32m[+] type command  exit to automatic kill session\e[0m"
+    echo "/bin/bash --login" > start.sh
+    ./start-proot.sh
+    _kill
+}
 function main_menu()
 {
-    var=$(dialog --menu "FEX-Android" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Uninstall Fex-Android" 5 "Kill All" 6 "About" 7 "Exit" 2>&1 >/dev/tty)
+    var=$(dialog --menu "FEX-Android" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Uninstall Fex-Android" 5 "Kill All" 6 "About" 7 "Run Terminal" 8 "Exit"2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
         exit 0
     fi
@@ -385,6 +400,8 @@ function main_menu()
     6)
 	about_fex;;
     7)
+	run-terminal;;
+    8)
 	exit 0;;
     esac
     exit 0
@@ -396,7 +413,7 @@ DRI3=Enabled
 GL=Disabled
 VK=Enabled
 FEX=Disabled
-WINE="7.12-amd64"
+WINE="8.15-amd64"
 SCR="1280x720"
 src1=off
 src2=off
@@ -404,7 +421,7 @@ src3=off
 src4=on
 src5=off
 src6=off
-ver="1.1-patch_root"
+ver="1.2-update"
 EOF
 
 chmod +x start-chroot.sh
