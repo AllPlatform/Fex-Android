@@ -244,7 +244,7 @@ function start_fex()
 	mode="proot non-root detected"
     fi
     am start -n com.termux.x11/com.termux.x11.MainActivity
-    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version 7.12-amd64\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode" 10 50
+    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version $WINE\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode" 10 50
     if [[ $checkroot == "root" ]]; then
         root_kill
     else                                                                                        ./start-proot.sh > /dev/null 2>&1 &
