@@ -437,7 +437,7 @@ function wine_ver()
             clear
 	    mkdir -p ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64
             wget https://github.com/Kron4ek/Wine-Builds/releases/download/proton-8.0-4/wine-proton-8.0-4-amd64.tar.xz -O wine-proton-8.0-4-amd64.tar.xz
-            wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-proton-8.0-4-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64
+            wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-proton-8.0-4-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64/wine.tar.xz
 	    WINE=wine-proton-8.0-4-amd64
 	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
             echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
@@ -462,7 +462,7 @@ function wine_ver()
             clear
 	    mkdir -p ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
             wget https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton8-15/wine-lutris-GE-Proton8-15-x86_64.tar.xz -O wine-lutris-GE-Proton8-15-x86_64.tar.xz
-	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-lutris-GE-Proton8-15-x86_64.tar.xz -O ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
+	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-lutris-GE-Proton8-15-x86_64.tar.xz -O ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64/wine.tar.xz
 	    WINE=lutris-GE-Proton8-15-x86_64
 	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
             echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
