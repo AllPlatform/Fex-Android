@@ -60,7 +60,7 @@ function main()
 }
 main
 
-cat <<'EOF' >> start-proot.sh1
+cat <<'EOF' >> start-proot.sh
 #!/data/data/com.termux/files/usr/bin/bash
 pulseaudio --start
 source /data/data/com.termux/files/home/Fex-Android/start.sh
@@ -104,7 +104,7 @@ cmd+=" $cmdstart"
 $cmd
 EOF
 
-cat <<'EOF' >> start-chroot.sh1
+cat <<'EOF' >> start-chroot.sh
 #!/data/data/com.termux/files/usr/bin/bash
 sudo rm -r /data/data/com.termux/files/usr/tmp/.wine*
 sudo mount --bind /proc ubuntu-fs64/proc
@@ -549,7 +549,7 @@ GL=Disabled
 VK=Enabled
 FEX=Disabled
 DBG=Disabled
-WINE="wine-8.15-amd64"
+WINE="0"
 SCR="1280x720"
 src1=off
 src2=off
