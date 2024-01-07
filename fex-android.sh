@@ -388,7 +388,7 @@ function resetprefix()
     rm -rf ubuntu-fs64/root/.wine | dialog --infobox "removing files..." 10 50
     tar -xf ubuntu-fs64/opt/wine/$WINE/wine.tar.xz -C ubuntu-fs64/root | dialog --infobox "Extracting $WINE files..." 10 50
     dialog --title "Fex-Android $ver" --msgbox "$WINE has been set for Fex-Emu" 10 50
-    wine
+    main_menu
 }
 
 function wine_ver()
