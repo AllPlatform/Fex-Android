@@ -27,11 +27,10 @@ function termux_install
     echo "exit-idle-time = -1" >> ~/../usr/etc/pulse/daemon.conf
     echo "autospawn = no" >> ~/../usr/etc/pulse/client.conf
     clear
-    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.2-update/ubuntu.tar.xz -O ubuntu.tar.xz
+    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/ubuntu.tar.xz -O ubuntu.tar.xz
     echo -e "\e[32m[+] Extracting Ubuntu 22.04.3 LTS RootFS...\e[0m"
     tar -xf ubuntu.tar.xz
-    echo -e "\e[32m[+] Extracting wine...\e[0m"
-    tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root
+    # echo -e "\e[32m[+] Extracting wine...\e[0m"
     echo -e "\e[32m[+] installation is complete\e[0m"
     echo -e "Type \e[31mfex\e[0m command to run"
     rm ubuntu.tar.xz
@@ -61,7 +60,7 @@ function main()
 }
 main
 
-cat <<'EOF' >> start-proot.sh
+cat <<'EOF' >> start-proot.sh1
 #!/data/data/com.termux/files/usr/bin/bash
 pulseaudio --start
 source /data/data/com.termux/files/home/Fex-Android/start.sh
@@ -79,8 +78,12 @@ unset DEX2OATBOOTCLASSPATH
 export DXVK_CONFIG_FILE=/sdcard/Fex-Android/dxvk.conf
 export USE_HEAP=1
 export DISPLAY=:1
+export MESA_LOADER_DRIVER_OVERRIDE=zink
+export GALLIUM_DRIVER=zink
+export ZINK_DESCRIPTORS=lazy
 export PULSE_SERVER=127.0.0.1
 export DXVK_HUD="devinfo,fps,api,version,gpuload"
+export DXVK_ASYNC=1
 SHELL=/bin/bash
 HOME=/root
 LANG=C.UTF-8
@@ -101,7 +104,7 @@ cmd+=" $cmdstart"
 $cmd
 EOF
 
-cat <<'EOF' >> start-chroot.sh
+cat <<'EOF' >> start-chroot.sh1
 #!/data/data/com.termux/files/usr/bin/bash
 sudo rm -r /data/data/com.termux/files/usr/tmp/.wine*
 sudo mount --bind /proc ubuntu-fs64/proc
@@ -128,8 +131,12 @@ export DXVK_CONFIG_FILE=/sdcard/Fex-Android/dxvk.conf
 export WINEDEBUG=-all
 export USE_HEAP=1
 export DISPLAY=:1
+export MESA_LOADER_DRIVER_OVERRIDE=zink
+export GALLIUM_DRIVER=zink
+export ZINK_DESCRIPTORS=lazy
 export PULSE_SERVER=127.0.0.1
 export DXVK_HUD="devinfo,fps,api,version,gpuload"
+export DXVK_ASYNC=1
 SHELL=/bin/bash
 HOME=/root
 LANG=C.UTF-8
@@ -216,17 +223,17 @@ function start_fex()
 {
     if [[ $DRI3 == "Enabled" ]]; then
 	export FEX_X87REDUCEDPRECISION=true
-	echo "cmdstart='/opt/wine/wine-8.15-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	echo "cmdstart='/opt/wine/$WINE/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     else
 	export MESA_VK_WSI_DEBUG=sw
 	export FEX_X87REDUCEDPRECISION=true
-	echo "cmdstart='/opt/wine/wine-8.15-amd64/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
+	echo "cmdstart='/opt/wine/$WINE/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
     fi
     _killall
     if [[ $DBG == "Enabled" ]]; then
 	clear
 	echo -e "\e[32m[+] run Debug mode in Proot\e[0m"
-        echo -e "\e[32m[+] type command  exit to automatic kill session\e[0m"
+        echo -e "\e[32m[+] type command exit to automatic kill session\e[0m"
 	termux-x11 :1 > /dev/null 2>&1 &
 	am start -n com.termux.x11/com.termux.x11.MainActivity > /dev/null 2>&1 &
 	./start-proot.sh
@@ -247,7 +254,7 @@ function start_fex()
     dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version $WINE\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode" 10 50
     if [[ $checkroot == "root" ]]; then
         root_kill
-    else                                                                                        ./start-proot.sh > /dev/null 2>&1 &
+    else
         _kill
     fi
     main_menu
@@ -296,12 +303,12 @@ function config_fex()
 	case $_vk in
 	1)
 	    VK="Enabled"
-	    write_env
-	    cp ubuntu-fs64/root/.fex-emu/ThunkLibs/* ubuntu-fs64/lib/x86_64-linux-gnu;;
+	    echo '{"ThunksDB": {"Vulkan": 1}}' > ubuntu-fs64/root/.fex-emu/thunks.json
+	    write_env;;
 	2)
 	    VK="Disabled"
-	    write_env
-	    cp ubuntu-fs64/opt/linux/x86_64-linux/* ubuntu-fs64/lib/x86_64-linux-gnu;;
+	    echo '{"ThunksDB": {"Vulkan": 0}}' > ubuntu-fs64/root/.fex-emu/thunks.json
+	    write_env;;
 	esac
 	config_fex
 	;;
@@ -376,18 +383,111 @@ function wine_csrc()
     wine
 }
 
+function resetprefix()
+{
+    rm -rf ubuntu-fs64/root/.wine | dialog --infobox "removing files..." 10 50
+    tar -xf ubuntu-fs64/opt/wine/$WINE/wine.tar.xz -C ubuntu-fs64/root | dialog --infobox "Extracting $WINE files..." 10 50
+    dialog --title "Fex-Android $ver" --msgbox "$WINE has been set for Fex-Emu" 10 50
+    wine
+}
+
+function wine_ver()
+{
+    _winever=$(dialog --menu "Select Wine version" 20 45 25 1 "wine-8.15-amd64 (52mb)" 2 "wine-proton-8.0-4-amd64 (55Mb)" 3 "lutris-GE-Proton8-15-x86_64 (87Mb)" 2>&1 >/dev/tty)
+    if [[ $? == 1 ]]; then
+        wine;
+    fi
+    case $_winever in
+    1)
+	if [ -d ubuntu-fs64/opt/wine/wine-8.15-amd64 ]; then
+	    WINE=wine-8.15-amd64
+	    write_env
+	    resetprefix
+	    main_menu;
+	else
+	    dialog --yesno "Do you want download wine-8.15-amd64 from Kron4ek/Wine-Builds" 10 40
+	    if [[ $? == 1 ]]; then
+        	wine_ver;
+    	    fi
+	    clear
+	    WINE=wine-8.15-amd64
+	    wget https://github.com/Kron4ek/Wine-Builds/releases/download/8.15/wine-8.15-amd64.tar.xz -O wine-8.15-amd64.tar.xz
+	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-8.15-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz
+	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
+	    echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
+	    tar -xf wine-8.15-amd64.tar.xz -C ubuntu-fs64/opt/wine
+	    rm wine-8.15-amd64.tar.xz
+            write_env
+            resetprefix
+            main_menu;
+	fi
+	;;
+    2)
+	if [ -d ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64 ]; then
+            WINE=wine-proton-8.0-4-amd64
+            write_env
+            resetprefix
+            main_menu;
+	else
+            dialog --yesno "Do you want download wine-proton-8.0-4-amd64 from Kron4ek/Wine-Builds" 10 40
+            if [[ $? == 1 ]]; then
+                wine_ver;
+            fi
+            clear
+            wget https://github.com/Kron4ek/Wine-Builds/releases/download/proton-8.0-4/wine-proton-8.0-4-amd64.tar.xz -O wine-proton-8.0-4-amd64.tar.xz
+            wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-proton-8.0-4-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64
+	    WINE=wine-proton-8.0-4-amd64
+	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
+            echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
+	    tar -xf wine-proton-8.0-4-amd64.tar.xz -C ubuntu-fs64/opt/wine
+	    rm wine-proton-8.0-4-amd64.tar.xz
+            write_env
+            resetprefix
+            main_menu;
+	fi
+	;;
+    3)
+	if [ -d ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64 ]; then
+            WINE=lutris-GE-Proton8-15-x86_64
+            write_env
+            resetprefix
+            main_menu;
+        else
+            dialog --yesno "Do you want download lutris-GE-Proton8-15-x86_64 from GloriousEggroll/wine-ge-custom" 10 40
+            if [[ $? == 1 ]]; then
+                wine_ver;
+	    fi
+            clear
+            wget https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton8-15/wine-lutris-GE-Proton8-15-x86_64.tar.xz -O wine-lutris-GE-Proton8-15-x86_64.tar.xz
+	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-lutris-GE-Proton8-15-x86_64.tar.xz -O ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
+	    WINE=lutris-GE-Proton8-15-x86_64
+	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
+            echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
+	    tar -xf lutris-GE-Proton8-15-x86_64.tar.xz -C ubuntu-fs64/opt/wine
+	    rm lutris-GE-Proton8-15-x86_64.tar.xz
+            write_env
+            resetprefix
+            main_menu;
+	fi
+	;;
+    esac
+    wine
+}
 function wine()
 {
-    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix" 2>&1 >/dev/tty)
+    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix" 4 "Select Wine version" 2>&1 >/dev/tty)
+    if [[ $? == 1 ]]; then
+	main_menu;
+    fi
     case $output in
     1)
 	wine_scr;;
     2)
 	wine_csrc;;
     3)
-	rm -rf ubuntu-fs64/root/.wine
-	tar -xf ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz -C ubuntu-fs64/root
-	wine;;
+	resetprefix;;
+    4)
+	wine_ver;;
     esac
     main_menu
 }
@@ -414,7 +514,10 @@ function run_terminal()
 }
 function main_menu()
 {
-    var=$(dialog --menu "FEX-Android" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Uninstall Fex-Android" 5 "Kill All" 6 "About" 7 "Run Terminal" 8 "Exit" 2>&1 >/dev/tty)
+    if [[ $WINE == "0" ]]; then
+	wine_ver
+    fi
+    var=$(dialog --menu "FEX-Android $ver" 20 45 25 1 "Start FEX-Emu" 2 "Configure Fex" 3 "Wine" 4 "Run Terminal" 5 "Kill All" 6 "About" 7 "Uninstall" 8 "Exit" 2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
         exit 0
     fi
@@ -426,13 +529,13 @@ function main_menu()
     3)
 	wine;;
     4)
-	uninstall;;
+	run_terminal;;
     5)
 	_kill;;
     6)
 	about_fex;;
     7)
-	run_terminal;;
+	uninstall;;
     8)
 	exit 0;;
     esac
@@ -446,7 +549,7 @@ GL=Disabled
 VK=Enabled
 FEX=Disabled
 DBG=Disabled
-WINE="8.15-amd64"
+WINE="wine-8.15-amd64"
 SCR="1280x720"
 src1=off
 src2=off
@@ -454,7 +557,7 @@ src3=off
 src4=on
 src5=off
 src6=off
-ver="1.2-update"
+ver="1.3-update"
 EOF
 
 chmod +x start-chroot.sh
