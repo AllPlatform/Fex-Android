@@ -410,6 +410,7 @@ function wine_ver()
         	wine_ver;
     	    fi
 	    clear
+	    mkdir ubuntu-fs64/opt/wine/wine-8.15-amd64
 	    WINE=wine-8.15-amd64
 	    wget https://github.com/Kron4ek/Wine-Builds/releases/download/8.15/wine-8.15-amd64.tar.xz -O wine-8.15-amd64.tar.xz
 	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-8.15-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-8.15-amd64/wine.tar.xz
@@ -434,6 +435,7 @@ function wine_ver()
                 wine_ver;
             fi
             clear
+	    mkdir -p ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64
             wget https://github.com/Kron4ek/Wine-Builds/releases/download/proton-8.0-4/wine-proton-8.0-4-amd64.tar.xz -O wine-proton-8.0-4-amd64.tar.xz
             wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-proton-8.0-4-amd64.tar.xz -O ubuntu-fs64/opt/wine/wine-proton-8.0-4-amd64
 	    WINE=wine-proton-8.0-4-amd64
@@ -458,13 +460,14 @@ function wine_ver()
                 wine_ver;
 	    fi
             clear
+	    mkdir -p ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
             wget https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton8-15/wine-lutris-GE-Proton8-15-x86_64.tar.xz -O wine-lutris-GE-Proton8-15-x86_64.tar.xz
-	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-lutris-GE-Proton8-15-x86_64.tar.xz -O ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
+	    wget https://github.com/AllPlatform/Fex-Android/releases/download/v1.3-update/prefix-wine-lutris-GE-Proton8-15-x86_64.tar.xz -O ubuntu-fs64/opt/wine/lutris-GE-Proton8-15-x86_64
 	    WINE=lutris-GE-Proton8-15-x86_64
 	    echo -e "\e[32m[+] Completed Download $WINE ...\e[0m"
             echo -e "\e[32m[+] Extracting Wine $WINE\e[0m"
-	    tar -xf lutris-GE-Proton8-15-x86_64.tar.xz -C ubuntu-fs64/opt/wine
-	    rm lutris-GE-Proton8-15-x86_64.tar.xz
+	    tar -xf wine-lutris-GE-Proton8-15-x86_64.tar.xz -C ubuntu-fs64/opt/wine
+	    rm wine-lutris-GE-Proton8-15-x86_64.tar.xz
             write_env
             resetprefix
             main_menu;
