@@ -393,7 +393,7 @@ function resetprefix()
 
 function wine_ver()
 {
-    _winever=$(dialog --menu "Select Wine version" 20 45 25 1 "wine-8.15-amd64 (52mb)" 2 "wine-proton-8.0-4-amd64 (55Mb)" 3 "lutris-GE-Proton8-15-x86_64 (87Mb)" 2>&1 >/dev/tty)
+    _winever=$(dialog --menu "Select Wine version" 20 45 25 1 "wine-8.15-amd64 (Stable, Recommend)" 2 "wine-proton-8.0-4-amd64 (Unstable, Staging)" 3 "lutris-GE-Proton8-15-x86_64 (Unstable, Staging)" 2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
         wine;
     fi
