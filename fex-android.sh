@@ -106,6 +106,9 @@ EOF
 
 cat <<'EOF' >> start-chroot.sh
 #!/data/data/com.termux/files/usr/bin/bash
+if [ ! -d /dev/shm ]; then
+    sudo mkdir -p /dev/shm
+fi
 sudo rm -r /data/data/com.termux/files/usr/tmp/.wine*
 sudo mount --bind /proc ubuntu-fs64/proc
 sudo mount --bind /dev ubuntu-fs64/dev
@@ -216,11 +219,14 @@ function _kill()
 }
 function write_env()
 {
-    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nDBG=$DBG\nWINE=$WINE\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6\nver=$ver" >$FEX_DATA
+    printf "DRI3=$DRI3\nGL=$GL\nVK=$VK\nFEX=$FEX\nDBG=$DBG\nWINE=$WINE\nESYNC=$ESYNC\nSCR=$SCR\nsrc1=$src1\nsrc2=$src2\nsrc3=$src3\nsrc4=$src4\nsrc5=$src5\nsrc6=$src6\nver=$ver" >$FEX_DATA
     chmod 777 $FEX_DATA
 }
 function start_fex()
 {
+    if [[ $ESYNC == "Enabled" ]]; then
+	export WINEESYNC=1
+    fi
     if [[ $DRI3 == "Enabled" ]]; then
 	export FEX_X87REDUCEDPRECISION=true
 	echo "cmdstart='/opt/wine/$WINE/bin/wine64 explorer /desktop=shell,$SCR /opt/tfm.exe'" > start.sh
@@ -251,7 +257,7 @@ function start_fex()
 	mode="proot non-root detected"
     fi
     am start -n com.termux.x11/com.termux.x11.MainActivity
-    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version $WINE\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode" 10 50
+    dialog --title "FEX-Android" --msgbox "Tap Ok to Stop Wine\nWine Version $WINE\nscreen Resolution $SCR\nTermux-X11 DRI3 $DRI3\nMode $mode Wine-Esync $ESYNC" 10 50
     if [[ $checkroot == "root" ]]; then
         root_kill
     else
@@ -476,9 +482,27 @@ function wine_ver()
     esac
     wine
 }
+
+function wineesync()
+{
+    _env=$(dialog --title "wine-esync" --menu "We do not recommend Enabled Wine esync" 10 45 25 1 "Enabled" 2 "Disabled" 2>&1 >/dev/tty)
+    if [[ $? == 1 ]]; then
+        wine;
+    fi
+    case $_env in
+    1)
+        write_env
+	ESYNC=Enabled;;
+    2)
+	write_env
+	ESYNC=Disabled;;
+    esac
+    wine
+}
+
 function wine()
 {
-    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix" 4 "Select Wine version" 2>&1 >/dev/tty)
+    output=$(dialog --menu "FEX-Android Wine Screen $SCR" 20 45 25 1 "Screen Size" 2 "Custom Screen Size" 3 "reset Wine Prefix" 4 "Select Wine version" 5 "Wine-esync" 2>&1 >/dev/tty)
     if [[ $? == 1 ]]; then
 	main_menu;
     fi
@@ -491,6 +515,8 @@ function wine()
 	resetprefix;;
     4)
 	wine_ver;;
+    5)
+	wineesync;;
     esac
     main_menu
 }
@@ -553,6 +579,7 @@ VK=Enabled
 FEX=Disabled
 DBG=Disabled
 WINE="0"
+ESYNC=Disabled
 SCR="1280x720"
 src1=off
 src2=off
@@ -560,7 +587,7 @@ src3=off
 src4=on
 src5=off
 src6=off
-ver="1.3-update"
+ver="1.4-update"
 EOF
 
 chmod +x start-chroot.sh
