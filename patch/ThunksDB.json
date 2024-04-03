@@ -1,0 +1,195 @@
+{
+  "DB": {
+    "GL": {
+      "Library" : "libGL-guest.so",
+      "Depends": [
+        "X11"
+      ],
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libGL.so",
+        "/lib/x86_64-linux-gnu/libGL.so.1",
+        "/lib/x86_64-linux-gnu/libGL.so.1.2.0",
+        "/lib/x86_64-linux-gnu/libGL.so.1.7.0"
+      ]
+    },
+    "GLESv2": {
+      "Library": "libGLESv2-guest.so",
+      "Depends": [
+        "X11"
+      ],
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libGLESv2.so",
+        "/lib/x86_64-linux-gnu/libGLESv2.so.2",
+        "/lib/x86_64-linux-gnu/libGLESv2.so.2.0.0"
+      ]
+    },
+    "X11": {
+      "Library": "libX11-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libX11.so",
+        "/lib/x86_64-linux-gnu/libX11.so.6",
+        "/lib/x86_64-linux-gnu/libX11.so.6.4.0"
+      ]
+    },
+    "Vulkan": {
+      "Library": "libvulkan-guest.so",
+      "Depends": [
+        "xcb"
+      ],
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libvulkan.so",
+        "/lib/x86_64-linux-gnu/libvulkan.so.1",
+        "@HOME@/.local/share/Steam/ubuntu12_32/steam-runtime/pinned_libs_64/libvulkan.so.1"
+      ],
+      "Comment": [
+        "Vulkan library relies on xcb, otherwise it crashes with jemalloc"
+      ]
+    },
+    "xcb": {
+      "Depends": [
+        "X11"
+      ],
+      "Library": "libxcb-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb.so",
+        "/lib/x86_64-linux-gnu/libxcb.so.1",
+        "/lib/x86_64-linux-gnu/libxcb.so.1.1.0"
+      ]
+    },
+    "xcb-dri2": {
+      "Library": "libxcb-dri2-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-dri2.so",
+        "/lib/x86_64-linux-gnu/libxcb-dri2.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-dri2.so.0.0.0"
+      ]
+    },
+    "xcb-dri3": {
+      "Library": "libxcb-dri3-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-dri3.so",
+        "/lib/x86_64-linux-gnu/libxcb-dri3.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-dri3.so.0.0.0"
+      ]
+    },
+    "xcb-xfixes": {
+      "Library": "libxcb-xfixes-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-xfixes.so",
+        "/lib/x86_64-linux-gnu/libxcb-xfixes.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-xfixes.so.0.0.0"
+      ]
+    },
+    "xcb-shm": {
+      "Library": "libxcb-shm-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-shm.so",
+        "/lib/x86_64-linux-gnu/libxcb-shm.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-shm.so.0.0.0"
+      ]
+    },
+    "xcb-sync": {
+      "Library": "libxcb-sync-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-sync.so",
+        "/lib/x86_64-linux-gnu/libxcb-sync.so.1",
+        "/lib/x86_64-linux-gnu/libxcb-sync.so.1.0.0"
+      ]
+    },
+    "xcb-randr": {
+      "Library": "libxcb-randr-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-randr.so",
+        "/lib/x86_64-linux-gnu/libxcb-randr.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-randr.so.0.1.0"
+      ]
+    },
+    "xcb-present": {
+      "Library": "libxcb-present-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-present.so",
+        "/lib/x86_64-linux-gnu/libxcb-present.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-present.so.0.0.0"
+      ]
+    },
+    "xcb-glx": {
+      "Library": "libxcb-glx-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxcb-glx.so",
+        "/lib/x86_64-linux-gnu/libxcb-glx.so.0",
+        "/lib/x86_64-linux-gnu/libxcb-glx.so.0.0.0"
+      ]
+    },
+    "xshmfence": {
+      "Library": "libxshmfence-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libxshmfence.so",
+        "/lib/x86_64-linux-gnu/libxshmfence.so.1",
+        "/lib/x86_64-linux-gnu/libxshmfence.so.1.0.0"
+      ]
+    },
+    "drm": {
+      "Library": "libdrm-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libdrm.so",
+        "/lib/x86_64-linux-gnu/libdrm.so.2",
+        "/lib/x86_64-linux-gnu/libdrm.so.2.4.0"
+      ]
+    },
+    "asound": {
+      "Library": "libasound-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libasound.so",
+        "/lib/x86_64-linux-gnu/libasound.so.2",
+        "/lib/x86_64-linux-gnu/libasound.so.2.0.0"
+      ]
+    },
+    "fex_thunk_test": {
+      "Library": "libfex_thunk_test-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libfex_thunk_test.so"
+      ]
+    },
+    "Xrender": {
+      "Library": "libXrender-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libXrender.so",
+        "/lib/x86_64-linux-gnu/libXrender.so.1",
+        "/lib/x86_64-linux-gnu/libXrender.so.1.3.0"
+      ]
+    },
+    "Xext": {
+      "Library": "libXext-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libXext.so",
+        "/lib/x86_64-linux-gnu/libXext.so.6",
+        "/lib/x86_64-linux-gnu/libXext.so.6.4.0"
+      ]
+    },
+    "Xfixes": {
+      "Library": "libXfixes-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libXfixes.so",
+        "/lib/x86_64-linux-gnu/libXfixes.so.3",
+        "/lib/x86_64-linux-gnu/libXfixes.so.3.1.0"
+      ]
+    },
+    "OpenCL": {
+      "Library" : "libOpenCL-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libOpenCL.so",
+        "/lib/x86_64-linux-gnu/libOpenCL.so.1",
+        "/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0"
+      ]
+    },
+    "WaylandClient": {
+      "Library" : "libwayland-client-guest.so",
+      "Overlay": [
+        "/lib/x86_64-linux-gnu/libwayland-client.so",
+        "/lib/x86_64-linux-gnu/libwayland-client.so.0",
+        "/lib/x86_64-linux-gnu/libwayland-client.so.0.20.0"
+      ]
+    },
+    "":{}
+  }
+}
